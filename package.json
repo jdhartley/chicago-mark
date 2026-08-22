@@ -1,0 +1,29 @@
+{
+  "name": "@jdhartley/chicago-mark",
+  "version": "0.1.0",
+  "description": "JD's interactive Chicago stars-and-hearts maker's mark",
+  "type": "module",
+  "sideEffects": true,
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "check:dist": "npm run build && git diff --exit-code -- dist"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "license": "MIT"
+}

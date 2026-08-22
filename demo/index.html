@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Chicago Mark</title>
+    <style>
+      body { min-height:100vh;margin:0;display:grid;place-items:center;background:#f7f1ed;color:#172323;font:16px system-ui,sans-serif; }
+      main { display:grid;gap:2rem;text-align:center; }
+      section { padding:2rem;border:1px solid #d7cbc4;border-radius:1rem;background:#fff; }
+      output { display:block;min-height:1.5em;margin-top:1rem;color:#6a5550; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section>
+        <h1>Default Chicago red</h1>
+        <jd-pens-chicago-mark></jd-pens-chicago-mark>
+      </section>
+      <section>
+        <h2>Themed</h2>
+        <jd-pens-chicago-mark
+          base-color="#0A7B83"
+          size="84"
+          heart-weight="2"
+          pen-weight="1"
+          stout-weight="1"
+          full-after-taps="5"
+          full-after-ms="1000"
+        ></jd-pens-chicago-mark>
+      </section>
+      <output id="events" aria-live="polite"></output>
+    </main>
+    <script type="module">
+      import '../dist/index.js';
+      const output = document.querySelector('#events');
+      document.addEventListener('jd-chicago-mark-tap', (event) => {
+        output.textContent = `Tap ${event.detail.streakCount} · burst ${event.detail.burstSize}`;
+      });
+      document.addEventListener('jd-chicago-mark-full-celebration', () => {
+        output.textContent = 'Full celebration unlocked';
+      });
+    </script>
+  </body>
+</html>
