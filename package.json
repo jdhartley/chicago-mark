@@ -1,6 +1,6 @@
 {
   "name": "@jdhartley/chicago-mark",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "JD's interactive Chicago stars-and-hearts maker's mark",
   "type": "module",
   "sideEffects": true,

@@ -55,6 +55,9 @@ Projects using TypeScript with React may need to add the element and its attribu
   stout-weight="0.08"
   full-after-taps="10"
   full-after-ms="2400"
+  hold-to-ink
+  hold-ms="2000"
+  ink-color="#27467A"
   aria-label="Chicago"
 ></jd-pens-chicago-mark>
 ```
@@ -64,10 +67,34 @@ Projects using TypeScript with React may need to add the element and its attribu
 the documented defaults. Internal cooldowns and device-specific particle limits remain fixed to
 protect accidental activation and rendering performance.
 
-The component emits bubbling, composed `jd-chicago-mark-tap` and
-`jd-chicago-mark-full-celebration` events. Their details are `{ streakCount, burstSize }` and
-`{ streakCount }`, respectively. They are integration hooks only; the component contains no
-analytics or network behavior.
+`hold-to-ink` arms a press-and-hold gesture: holding the mark (or holding Space while it has focus)
+inks its four hearts one by one in `ink-color`, and the fourth completes the hold. Letting go early
+drains them and the release counts as an ordinary tap; the click that ends a completed hold does
+not. Without the attribute a long press does nothing special, so a page can arm it only for the
+people it means to, for example after `jd-chicago-mark-full-celebration`. `hold-ms` is bounded to
+600–10000 and defaults to 2000. Under `prefers-reduced-motion` each heart inks in a single step.
+
+The component emits bubbling, composed `jd-chicago-mark-tap`, `jd-chicago-mark-full-celebration`,
+and `jd-chicago-mark-hold` events. Their details are `{ streakCount, burstSize }`,
+`{ streakCount }`, and `{ holdMs }`, respectively. They are integration hooks only; the component
+contains no analytics or network behavior.
+
+## Custom particles
+
+Set the `particles` property to mix extra particles into every burst and full celebration:
+
+```js
+const mark = document.querySelector('jd-pens-chicago-mark');
+mark.particles = [
+  { svg: '<svg viewBox="0 0 32 32">…</svg>', weight: 0.2 },
+  { svg: '<svg viewBox="0 0 32 32">…</svg>', weight: 0.1 },
+];
+```
+
+Each custom weight is normalized together with `heart-weight`, `pen-weight`, and `stout-weight`.
+To redraw the pen, set `pen-weight="0"` and add your own pen at the share it should keep. `svg` is
+inserted with `innerHTML`: pass only trusted, bundled markup, never user or network content. The
+property may be set before the element is defined; it is picked up on connection.
 
 Open `demo/index.html` through a local web server after running `npm run build` to try the defaults
 and a themed variant.

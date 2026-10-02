@@ -2,6 +2,8 @@ export const DEFAULT_BASE_COLOR = '#EF002B';
 export const DEFAULT_SIZE = 60;
 export const DEFAULT_FULL_AFTER_TAPS = 10;
 export const DEFAULT_FULL_AFTER_MS = 2_400;
+export const DEFAULT_HOLD_MS = 2_000;
+export const DEFAULT_INK_COLOR = '#27467a';
 export const DEFAULT_HEART_COLORS = [
     '#ff5570',
     '#ff8b45',
@@ -52,6 +54,35 @@ function validWeight(value, fallback) {
     return value === undefined || !Number.isFinite(value) || value < 0 || value > 100
         ? fallback
         : value;
+}
+/** One raw particle weight, or the fallback when it is missing or outside 0–100. */
+export function particleWeight(value, fallback) {
+    return validWeight(value, fallback);
+}
+/**
+ * Normalizes a list of raw weights so they sum to one. Invalid entries count as zero; a list with
+ * no positive weight returns null so the caller can fall back to its defaults.
+ */
+export function normalizeWeightList(weights) {
+    const safe = weights.map((weight) => Number.isFinite(weight) && weight > 0 && weight <= 100 ? weight : 0);
+    const total = safe.reduce((sum, weight) => sum + weight, 0);
+    if (total <= 0)
+        return null;
+    return safe.map((weight) => weight / total);
+}
+/** The index a roll in [0, 1) lands on in a normalized weight list. */
+export function pickWeightedIndex(roll, normalized) {
+    let edge = 0;
+    for (let index = 0; index < normalized.length; index += 1) {
+        edge += normalized[index] ?? 0;
+        if (roll < edge)
+            return index;
+    }
+    for (let index = normalized.length - 1; index >= 0; index -= 1) {
+        if ((normalized[index] ?? 0) > 0)
+            return index;
+    }
+    return 0;
 }
 export function celebrationIconForRoll(roll, weights = DEFAULT_PARTICLE_WEIGHTS) {
     if (roll < weights.heart)
