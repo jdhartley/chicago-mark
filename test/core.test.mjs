@@ -7,9 +7,12 @@ import {
   celebrationIconForRoll,
   celebrationParticleBudget,
   normalizeParticleWeights,
+  normalizeWeightList,
   parseBoundedNumber,
   parseHexColor,
   parseHexColorList,
+  particleWeight,
+  pickWeightedIndex,
 } from '../dist/core.js';
 
 test('validates colors and numeric attributes', () => {
@@ -73,4 +76,25 @@ test('requires a sustained streak and honors custom thresholds and cooldowns', (
     advanceCelebrationMeter(meter, 500, { taps: 3, durationMs: 500 }).fullScreen,
     true,
   );
+});
+
+test('normalizes mixed built-in and custom particle weights', () => {
+  assert.deepEqual(normalizeWeightList([2, 1, 1]), [0.5, 0.25, 0.25]);
+  assert.deepEqual(normalizeWeightList([1, Number.NaN, -1, 101, 1]), [0.5, 0, 0, 0, 0.5]);
+  assert.equal(normalizeWeightList([0, 0]), null);
+  assert.equal(normalizeWeightList([]), null);
+  assert.equal(particleWeight(undefined, 0.27), 0.27);
+  assert.equal(particleWeight(0, 0.27), 0);
+  assert.equal(particleWeight(-1, 0.27), 0.27);
+});
+
+test('picks weighted indexes and never lands on a zero-weight tail', () => {
+  const weights = [0.5, 0, 0.25, 0.25];
+  assert.equal(pickWeightedIndex(0, weights), 0);
+  assert.equal(pickWeightedIndex(0.49, weights), 0);
+  assert.equal(pickWeightedIndex(0.5, weights), 2);
+  assert.equal(pickWeightedIndex(0.74, weights), 2);
+  assert.equal(pickWeightedIndex(0.75, weights), 3);
+  assert.equal(pickWeightedIndex(0.999999, [0.5, 0.5, 0]), 1);
+  assert.equal(pickWeightedIndex(1, [0.5, 0.5, 0]), 1);
 });

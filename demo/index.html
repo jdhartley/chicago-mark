@@ -29,6 +29,17 @@
           full-after-ms="1000"
         ></jd-pens-chicago-mark>
       </section>
+      <section>
+        <h2>Hold to ink, custom particles</h2>
+        <jd-pens-chicago-mark
+          id="armed"
+          base-color="#bd5847"
+          hold-to-ink
+          hold-ms="1600"
+          ink-color="#27467a"
+          pen-weight="0"
+        ></jd-pens-chicago-mark>
+      </section>
       <output id="events" aria-live="polite"></output>
     </main>
     <script type="module">
@@ -40,6 +51,20 @@
       document.addEventListener('jd-chicago-mark-full-celebration', () => {
         output.textContent = 'Full celebration unlocked';
       });
+      document.addEventListener('jd-chicago-mark-hold', (event) => {
+        output.textContent = `Held for ${event.detail.holdMs} ms`;
+      });
+      // A custom drop and a custom nib stand in for the built-in pen at the same share.
+      document.querySelector('#armed').particles = [
+        {
+          svg: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.6C10.6 4.9 12.4 7.6 12.4 10.1a4.4 4.4 0 0 1-8.8 0c0-2.5 1.8-5.2 4.4-8.5Z" fill="#27467a"/></svg>',
+          weight: 0.15,
+        },
+        {
+          svg: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.6 1.8h6.8l1.4 5.4L8 14.6 3.2 7.2Z" fill="#1c1813"/></svg>',
+          weight: 0.12,
+        },
+      ];
     </script>
   </body>
 </html>
